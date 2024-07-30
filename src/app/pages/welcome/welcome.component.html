@@ -1,0 +1,588 @@
+<!--
+  Authors : initappz (Rahul Jograna)
+  Website : https://initappz.com/
+  App Name : Bunitas Salon Full App Flutter
+  This App Template Source code is licensed as per the
+  terms found in the Website https://initappz.com/license
+  Copyright and Good Faith Purchasers © 2022-present initappz.
+ -->
+<div class="row_div">
+  <div class="row">
+    <div
+      class="col-lg-12 col-sm-4 back_image bg_image"
+      [style.backgroundImage]="'url(assets/imgs/back.png)'"
+    >
+      <div class="overlay">
+        <div class="container">
+          <div class="row justify-content-md-center">
+            <div class="col-xl-10 col-lg-8">
+              <div
+                class="bold_lbl anim-container"
+                *ngIf="util.deviceType == 'desktop'"
+              >
+                <p style="text-wrap: nowrap">Get The BEST</p>
+                <section class="animation">
+                  <div class="first">
+                    <div style="text-wrap: nowrap">SALONS</div>
+                  </div>
+                  <div class="second">
+                    <div style="text-wrap: nowrap">MOBILE BEAUTICIANS</div>
+                  </div>
+                  <div class="third">
+                    <div style="text-wrap: nowrap">BEAUTY PRODUCTS</div>
+                  </div>
+                </section>
+                <p style="text-wrap: nowrap">Near You!</p>
+              </div>
+
+              <div
+                class="bold_lbl anim-container-mobile"
+                *ngIf="util.deviceType != 'desktop'"
+              >
+                <p style="text-wrap: nowrap">Get The BEST</p>
+                <section class="animation">
+                  <div class="first">
+                    <div style="text-wrap: nowrap">SALONS</div>
+                  </div>
+                  <div class="second">
+                    <div style="text-wrap: nowrap">MOBILE BEAUTICIANS</div>
+                  </div>
+                  <div class="third">
+                    <div style="text-wrap: nowrap">BEAUTY PRODUCTS</div>
+                  </div>
+                </section>
+                <p style="text-wrap: nowrap">Near You!</p>
+              </div>
+
+              <div class="row full_div container">
+                <div class="row col-11">
+                  <div class="col-6">
+                    <div class="input_div">
+                      <!-- <img src="assets/imgs/search.png" style="width: 18px;height: 18px;"> -->
+                      <input
+                        type="text"
+                        style="font-size: 16px"
+                        class="form-control"
+                        [(ngModel)]="autocomplete1.query_treatment"
+                        [placeholder]="util.translate('Search Treatment')"
+                        (ngModelChange)="
+                          onSearchChangeTreatmentCategory($event)
+                        "
+                      />
+                      <img
+                        src="assets/imgs/remove.png"
+                        style="width: 20px; height: 20px; cursor: pointer"
+                        *ngIf="autocomplete1.query_treatment != ''"
+                        (click)="removeTreatmentCategorySearchKey()"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="input_div">
+                      <img
+                        src="assets/imgs/divider.png"
+                        style="width: 22px; height: 25px"
+                      />
+                      <img
+                        src="assets/imgs/placeholder.png"
+                        style="width: 18px; height: 18px"
+                      />
+                      <input
+                        type="text"
+                        style="font-size: 16px"
+                        class="form-control"
+                        [(ngModel)]="autocomplete1.query_location"
+                        [placeholder]="util.translate('Current Location')"
+                        (ngModelChange)="onSearchChangeLocation($event)"
+                      />
+                      <img
+                        src="assets/imgs/remove.png"
+                        style="width: 20px; height: 20px; cursor: pointer"
+                        *ngIf="autocomplete1.query_location != ''"
+                        (click)="removeLocationSearchKey()"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-1" *ngIf="util.deviceType == 'desktop'">
+                  <div class="btns">
+                    <!-- <div class="locate_btn waves-effect" mdbWavesEffect (click)="locate()">
+                      <mdb-icon fas icon="location-arrow"></mdb-icon>
+                      {{util.translate('Locate Me&nbsp;')}}
+                    </div> -->
+                    <button class="arrow_btn" (click)="locate()">
+                      <mdb-icon fas icon="search"></mdb-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="row" *ngIf="util.deviceType !== 'desktop'">
+                <div class="col-12">
+                  <div
+                    class="locate_btn_lng waves-effect"
+                    mdbWavesEffect
+                    (click)="locate()"
+                  >
+                    <mdb-icon fas icon="location-arrow"></mdb-icon>
+                    {{ util.translate("Locate Me") }}
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="row col-11">
+                  <div class="col-6" style="padding-right: 0px">
+                    <div
+                      class="treatment_list"
+                      *ngIf="
+                        autocompleteTreatmentItems.length > 0 &&
+                        this.autocomplete1.query_treatment != ''
+                      "
+                    >
+                      <div
+                        ngClass="treatment_name"
+                        *ngFor="let item of autocompleteTreatmentItems"
+                        (click)="selectSearchTreatmentResult(item)"
+                      >
+                        <img
+                          class="treatment_icon"
+                          [src]="api.mediaURL + item.cover"
+                          [style]="item.type == 1 ? 'margin-left: 15px' : ''"
+                        />
+                        <p [innerHTML]="replaceString(item.name)"></p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-6" style="padding-right: 0px">
+                    <div
+                      class="location_list"
+                      *ngIf="
+                        autocompleteLocationItems.length > 0 &&
+                        this.autocomplete1.query_location != ''
+                      "
+                    >
+                      <div
+                        class="location_name"
+                        *ngFor="let item of autocompleteLocationItems"
+                        (click)="selectSearchLocationResult(item)"
+                      >
+                        <mdb-icon
+                          fas
+                          icon="map-marker-alt"
+                          style="color: gray; margin-right: 10px"
+                        ></mdb-icon>
+                        {{ item.description }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="container service_div">
+  <div class="row">
+    <div class="col-lg-2 col-sm-4 col-md-4 service_box">
+      <img src="assets/homeicons/booking.png" style="width: 80px;" alt="">
+      <label class="small_lbl">{{util.translate('Online Booking')}}</label>
+    </div>
+    <div class="col-lg-2 col-sm-4 col-md-4 service_box">
+      <img src="assets/homeicons/online-gambling.png" style="width: 80px;" alt="">
+      <label class="small_lbl">{{util.translate('Slot Blockers')}}</label>
+    </div>
+    <div class="col-lg-2 col-sm-4 col-md-4 service_box">
+      <img src="assets/homeicons/hair-dye-brush.png" style="width: 80px;" alt="">
+      <label class="small_lbl">{{util.translate('Package Booking')}}</label>
+    </div>
+    <div class="col-lg-2 col-sm-4 col-md-4 service_box">
+      <img src="assets/homeicons/hair-salon.png" style="width: 80px;" alt="">
+      <label class="small_lbl">{{util.translate('Barbar Shops')}}</label>
+    </div>
+    <div class="col-lg-2 col-sm-4 col-md-4 service_box">
+      <img src="assets/homeicons/seat.png" style="width: 80px;" alt="">
+      <label class="small_lbl">{{util.translate('Service At Home')}}</label>
+    </div>
+    <div class="col-lg-2 col-sm-4 col-md-4 service_box">
+      <img src="assets/homeicons/package.png" style="width: 80px;" alt="">
+      <label class="small_lbl">{{util.translate('Truested Products')}}</label>
+    </div>
+
+  </div>
+</div> -->
+
+<div style="padding-top: 20px">
+  <div class="container" style="font-size: 17px">
+    <marquee behavior="scroll" direction="left">
+      Book Locally Beauty treatments and wellness services.
+      <a style="color: #9c0278" (click)="scrollToDownload()">Download</a> the
+      Bunitas App Now.
+    </marquee>
+  </div>
+</div>
+
+<!-- <div *ngIf="recommendedSalonList.length > 0">
+  <div class="container" style="display: flex;justify-content: space-between;padding: 50px;align-items: center;">
+    <img src="assets/imgs/recommended-salon.png" style="width:150px; height: 150px;margin-right: 70px;"/>
+    <div style="width: 100%;">
+      <carousel [cellWidth]="200" [height]="200" [autoplay]="true" style="z-index: unset;">
+        <div class="carousel-cell" *ngFor="let item of recommendedSalonList">
+          <div class="px-0 rounded overflow-hidden shadow-sm border">
+            <a class="text-dark" (click)="onSalon(item.uid,item.name)">
+              <div class="service-list text-center pb-2 animate">
+                <div
+                  [ngStyle]="{'background-image': 'url('+ api.mediaURL + item.cover +'),url(assets/images/placeholder.png)'}"
+                  class="bg-img mb-3"></div>
+                <h6 class="text-black ff-medium px-2 text-overflow salon-head-text">{{item.name}}</h6>
+
+                <div style="font-size: 15px;">
+                  <span *ngFor="let cates of item.categories;let j = index;"> {{cates.name}} <span
+                      *ngIf="(item.categories.length - 1) != j">,</span> </span>
+                </div>
+                <div class="d-flex justify-content-center align-item-center mb-2">
+                  <mdb-icon fas icon="star" size="sm" [ngStyle]="{color: item.rating >= 1 ? 'orange':'grey'}">
+                  </mdb-icon>
+                  <mdb-icon fas icon="star" size="sm" [ngStyle]="{color: item.rating >= 2 ? 'orange':'grey'}">
+                  </mdb-icon>
+                  <mdb-icon fas icon="star" size="sm" [ngStyle]="{color: item.rating >= 3 ? 'orange':'grey'}">
+                  </mdb-icon>
+                  <mdb-icon fas icon="star" size="sm" [ngStyle]="{color: item.rating >= 4 ? 'orange':'grey'}">
+                  </mdb-icon>
+                  <mdb-icon fas icon="star" size="sm" [ngStyle]="{color: item.rating >= 5 ? 'orange':'grey'}">
+                  </mdb-icon>
+                  <h6 class="text-muted ff-medium pl-2 rf-6 m-0 rf-lg-1"> {{item.rating}} ( {{item.total_rating}} )</h6>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </carousel>
+    </div>
+  </div>
+</div> -->
+
+<div style="padding: 60px 0px; background: #f5f5f5">
+  <div class="container">
+    <div class="row getapp_div" *ngIf="util.deviceType == 'desktop'">
+      <div class="col-lg-6 getapp_content">
+        <label class="head_lbl">{{
+          util.translate("Looking for a New Look?")
+        }}</label>
+        <label class="small_lbl">
+          {{
+            util.translate(
+              "Want to pamper yourself with a relaxing treatment? Don't waste time searching online. Find your nearby favourite salon and beauty specialist in minutes. Whether you need a haircut, a manicure, a facial or a massage, we have it all."
+            )
+          }}
+        </label>
+        <label class="small_lbl" style="text-align: center; margin-top: 30px"
+          >Book now and get ready to shine!</label
+        >
+        <button
+          mdbBtn
+          class="round_btn"
+          (click)="goToSearch()"
+          style="align-self: center"
+        >
+          {{ util.translate("Search Treatments") }}
+        </button>
+      </div>
+      <div class="col-lg-6">
+        <img src="assets/imgs/home-1.jpg" style="width: 90%" />
+      </div>
+    </div>
+    <div class="row getapp_div" *ngIf="util.deviceType != 'desktop'">
+      <div class="col-lg-6 getapp_content">
+        <label class="head_lbl">{{
+          util.translate("Looking for a New Look?")
+        }}</label>
+        <label class="small_lbl">
+          {{
+            util.translate(
+              "Want to pamper yourself with a relaxing treatment? Don't waste time searching online. Find your nearby favourite salon and beauty specialist in minutes. Whether you need a haircut, a manicure, a facial or a massage, we have it all."
+            )
+          }}
+        </label>
+        <label class="small_lbl" style="text-align: center"
+          >Book now and get ready to shine!</label
+        >
+        <button
+          mdbBtn
+          class="round_btn"
+          (click)="goToSearch()"
+          style="align-self: center"
+        >
+          {{ util.translate("Search Treatments") }}
+        </button>
+      </div>
+      <div class="col-lg-6">
+        <img src="assets/imgs/home-1.jpg" style="width: 90%" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="padding: 60px 0px">
+  <div class="container">
+    <div class="row getapp_div">
+      <div class="col-lg-6">
+        <img src="assets/imgs/home-2.jpg" style="width: 90%" />
+      </div>
+      <div class="col-lg-6 getapp_content">
+        <label class="head_lbl">{{
+          util.translate("Salon Owners & Mobile Beauticians")
+        }}</label>
+        <label class="small_lbl">
+          Boost your sales by reaching new customers online. <br />Showcase your
+          brand, availability, and services on Bunitas and connect with
+          thousands of clients in your area. Make it easy for clients to book
+          you online from your social media pages. <br /><br />
+          With Bunitas,<br />
+          - Grow your client base.<br />
+          - Online appointment scheduling.<br />
+          - Earn trust with ratings and reviews<br />
+          - Sell your Products
+        </label>
+        <button
+          mdbBtn
+          class="round_btn"
+          (click)="goToPartner()"
+          style="align-self: center"
+        >
+          {{ util.translate("Become A Partner") }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="background: #f5f5f5; padding: 60px 0px">
+  <div class="container">
+    <div class="row getapp_div">
+      <div class="col-lg-6 getapp_content">
+        <label class="head_lbl">{{
+          util.translate("Sell & Buy Products")
+        }}</label>
+        <label class="small_lbl">
+          With Bunitas, you have the ultimate online marketplace for you
+          treatment products!<br />
+          Whether you are looking for a new customer or a new supplier, Bunitas
+          has you covered.<br /><br />
+          Join Bunitas today and start selling and buying products that make you
+          feel good!
+        </label>
+        <button
+          mdbBtn
+          class="round_btn"
+          (click)="goToShop()"
+          style="align-self: center"
+        >
+          {{ util.translate("Browse Products") }}
+        </button>
+      </div>
+      <div class="col-lg-6">
+        <img src="assets/imgs/home-3.jpg" style="width: 90%" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="padding: 60px 0px" id="downloadLocation" #downloadLocation>
+  <div class="container">
+    <div
+      class="StaticPageSection StaticPageSection--maxWidth-primary DownloadApp"
+    >
+      <p class="Text SectionTitle SectionTitle--40">Download the Bunitas App</p>
+      <p
+        class="Text SectionDescription"
+        style="margin: 10px 0px 0px 0px !important"
+      >
+        Bunitas App is the mobile app that lets you:
+      </p>
+      <p
+        class="Text SectionDescription"
+        style="margin: 10px 0px 0px 0px !important"
+      >
+        - Easily manage your Business
+      </p>
+      <p
+        class="Text SectionDescription"
+        style="margin: 10px 0px 40px 0px !important"
+      >
+        - Book your beautiful treatments anytime, anywhere
+      </p>
+      <div class="DownloadApp__appCardsWrapper">
+        <div
+          class="AppCard AppCard--background-gray"
+          style="display: flex; text-align: center; padding-bottom: 20px"
+        >
+          <img src="assets/imgs/mobile-user.jpg" style="width: 50%" />
+          <div>
+            <h3
+              class="Text Text--color-white AppCard__marketplaceTitle"
+              style="
+                margin-bottom: 42px;
+                white-space: break-spaces;
+                color: black;
+              "
+            >
+              Bunitas App for Customers
+            </h3>
+            <div
+              class="AppCard__storeIconWrapper"
+              style="margin: auto; margin-top: 80px"
+            >
+              <a [href]="util.apple_appstore" target="_blank">
+                <img
+                  src="assets/imgs/appstore.svg"
+                  alt=""
+                  style="height: 45px"
+                />
+              </a>
+              <a [href]="util.google_playstore" target="_blank">
+                <img src="assets/imgs/google.svg" alt="" style="height: 45px" />
+              </a>
+            </div>
+          </div>
+        </div>
+        <div
+          class="AppCard AppCard--background-yellow"
+          style="display: flex; text-align: center; padding-bottom: 20px"
+        >
+          <img src="assets/imgs/mobile-owner.jpg" style="width: 50%" />
+          <div>
+            <h3
+              class="Text Text--color-black AppCard__marketplaceTitle"
+              style="margin-bottom: 0px; white-space: break-spaces"
+            >
+              Bunitas App for Partners
+            </h3>
+            <p
+              class="Text SectionDescription"
+              style="
+                margin: 0px 0px 10px 0px !important;
+                font-size: 20px;
+                white-space: break-spaces;
+                color: black;
+              "
+            >
+              Salon Owners & Mobile Beauticians
+            </p>
+            <div
+              class="AppCard__storeIconWrapper"
+              style="margin: auto; margin-top: 20px"
+            >
+              <a [href]="util.apple_appstore" target="_blank">
+                <img
+                  src="assets/imgs/appstore.svg"
+                  alt=""
+                  style="height: 45px"
+                />
+              </a>
+              <a [href]="util.google_playstore" target="_blank">
+                <img src="assets/imgs/google.svg" alt="" style="height: 45px" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container blog_container" *ngIf="blogs?.length">
+  <label class="blog_header">{{ util.translate("Our Blogs") }}</label>
+
+  <div class="row product_div">
+    <div
+      class="pro_col col-lg-4 col-sm-12 col-md-6 col-xs-12"
+      *ngFor="let item of blogs"
+      (click)="goToBlogs(item)"
+    >
+      <div class="pro_div hoverable">
+        <div
+          class="rest_img bg_image"
+          [style.backgroundImage]="'url(' + api.mediaURL + item.cover + ')'"
+        >
+          <div class="overlay">
+            <label class="date">{{ getDate(item.updated_at) }} </label>
+            <label class="month">{{ getMonth(item.updated_at) }} </label>
+          </div>
+        </div>
+        <div class="content_div">
+          <label class="pro_name"
+            >{{
+              item.title.length > 20
+                ? (item.title | slice : 0 : 20) + ".."
+                : item.title
+            }}
+          </label>
+          <label class="addr" [innerHTML]="getContent(item)"> </label>
+          <div class="service_flex">
+            <label>{{ util.translate("Read More") }}</label>
+            <mdb-icon fas icon="arrow-right"></mdb-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+    <mdb-icon fas icon="long-arrow-alt-right" class="all_blog"></mdb-icon>
+  </div>
+</div>
+<!--
+<div class="container">
+  <section class="text-center my-5 p-1">
+
+    <h2 class="h1-responsive ff-bold my-5"> {{util.translate("Why is it so great?")}} </h2>
+
+    <div class="mb-5">
+      <a><img class="pr-2" src="assets/images/appstore.png" height="40" /></a>
+      <a><img src="assets/images/playmarket.png" height="40" /></a>
+    </div>
+
+    <p class="lead grey-text w-responsive mx-auto mb-5"> {{util.translate("Lorem ipsum dolor sit amet, consectetur
+      adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.")}}
+    </p>
+
+
+  </section>
+</div>
+
+
+<div style="background: #f5f5f5;">
+  <div class="container" style="padding-top: 65px;padding-bottom: 40px;">
+    <div class="row">
+      <div class="col-lg-6 col-md-12 col-xs-12">
+        <div style="margin-bottom: 20px;flex-direction: column;align-items: center;display: flex;">
+          <div style="padding-right: 30px;">
+            <i class="icofont-island-alt"></i>
+          </div>
+          <div class="media-body" style="text-align: center;flex: 1;">
+            <h4 class="media-heading" style="font-size: 24px!important;">Get Updates &amp; More</h4>
+            <p style="font-size: 16px!important;color: #5e6d77!important;">Thoughtful thoughts to your inbox</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 col-md-12 col-xs-12">
+        <form action="https://bunitas.co.uk/newsletter/subscribe" class="subcribe-form bravo-subscribe-form bravo-form">
+          <input type="hidden" name="_token" value="l6yNkXDsH3KWWyqfRFB4i4fP7HdjFmP3o1cSvoGr">
+          <div class="form-group newsletter-section" style="display: flex;margin-bottom: 15px;">
+            <input type="text" name="first_name" class="form-control email-input" placeholder="First Name">
+            <input type="text" name="email" class="form-control email-input" placeholder="Your Email">
+            <button type="submit" class="btn-submit">Subscribe</button>
+          </div>
+          <div class="form-mess"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div> -->
+<script>
+  const word1 = document.getElementById("word1");
+  setTimeout(() => {
+    word1.style.visibility = "hidden";
+  }, 1000);
+</script>
